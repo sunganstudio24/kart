@@ -1,0 +1,14 @@
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{fs.mkdirSync("tests/screenshots",{recursive:true});const server=http.createServer((q,r)=>{r.setHeader('Content-Type','text/html; charset=utf-8');r.end(fs.readFileSync('index.html'));});await new Promise(r=>server.listen(8768,'127.0.0.1',r));
+const browser=await chromium.launchPersistentContext(path.resolve('.characters-profile'),{channel:'chrome',headless:true,viewport:{width:1280,height:800},args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+try{const page=await browser.newPage(),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.log('ERROR',e.message);});
+await page.route('**/three.min.js',r=>r.fulfill({path:process.env.THREE_JS||require.resolve('three/build/three.min.js'),contentType:'application/javascript'}));await page.route('**/fonts.googleapis.com/**',r=>r.abort());await page.route('**/fonts.gstatic.com/**',r=>r.abort());
+await page.goto('http://127.0.0.1:8768');await page.waitForFunction(()=>document.getElementById('loading').classList.contains('hide'));
+const names=await page.evaluate(()=>CHARS.map(c=>c.name));assert.deepEqual(names,['배찌','다오','우니','모스','디지니','마리드','에띠','케피']);
+await page.evaluate(async()=>{for(let c=0;c<8;c++)for(const d of ['up','down','left','right'])avatarTexture(c,d);await new Promise(r=>setTimeout(r,500));for(const t of AVATAR_TEXTURES.values()){const p=t.image.getContext('2d').getImageData(0,0,240,296).data;if(!p.some((x,i)=>i%4===3&&x>0))throw Error('blank avatar');}});
+await page.screenshot({path:'tests/screenshots/menu.png'});
+await page.locator('#goBtn').click();await page.waitForTimeout(300);await page.evaluate(()=>{pauseGame();hide('pause');});await page.screenshot({path:'tests/screenshots/race.png'});
+const result=await page.evaluate(()=>{const rows=[];for(let i=0;i<10;i++){STATE='paused';startRace();pauseGame();GFX.renderer.render(GFX.scene,GFX.camera);rows.push({...GFX.renderer.info.memory});}toMenu();for(let i=0;i<16;i++)setPreview(i%6,i%8);return {cache:AVATAR_TEXTURES.size,rows,portraits:document.querySelectorAll('#charList svg').length};});
+assert.equal(result.cache,32);assert.equal(result.portraits,8);assert.equal(errors.length,0,errors.join('\n'));console.log(JSON.stringify({names,...result,errors}));fs.writeFileSync('tests/screenshots/character-test-results.json',JSON.stringify({names,...result,errors},null,2));
+}finally{await browser.close();server.close();}})().catch(e=>{console.error(e);process.exit(1)});

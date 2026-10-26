@@ -1,0 +1,5 @@
+node_modules/
+.qa-profile/
+.ui-profile/
+.characters-profile/
+tests/screenshots/
