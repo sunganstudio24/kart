@@ -1,5 +1,9 @@
 # 물풍선배틀 캐릭터 적용
 
+> **현재 상태(2026-10-26):** 주행 캐릭터는 `models/*.glb` 3D 모델 8종을 쓴다(배율 1.1). 아래 첫 섹션의 "2D SVG 스프라이트" 설명은 초기 버전 기록이며 지금은 쓰지 않는다. 메뉴·순위표 얼굴만 SVG.
+>
+> 테스트: `npm install` 후 `npm test`(코어·지오메트리). 렌더·UI 테스트는 `npm run test:browser`(인터넷 필요).
+
 기존 안정성 패치 `7e1f36e` 위에 적용한 후속 변경이다. 물풍선배틀 저장소는 수정하지 않았다.
 
 - 원본: `sunganstudio24/balloonbattle`, 커밋 `fa374973cc02c26a4900f67b7048b86d903287b1`, `index.html`의 `avatarSVG`와 `shade`.

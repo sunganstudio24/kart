@@ -1,0 +1,12 @@
+{
+  "name": "boost-kart",
+  "private": true,
+  "scripts": {
+    "test": "node tests/core.test.cjs && node tests/geometry.test.cjs",
+    "test:browser": "node tests/render.test.cjs && node tests/ui.test.cjs"
+  },
+  "devDependencies": {
+    "three": "0.128.0",
+    "playwright": "^1.40.0"
+  }
+}
