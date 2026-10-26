@@ -157,6 +157,30 @@ kbd{display:inline-block;min-width:34px;padding:4px 9px;border-radius:8px;backgr
 .mrow{display:flex;gap:9px}.mrow .mbtn{flex:1}
 #loading{position:fixed;inset:0;display:grid;place-items:center;background:#0d1b33;color:#fff;font-size:22px;z-index:50}
 .face-svg{display:inline-block;width:42px;height:42px;vertical-align:middle}.face-svg svg{width:100%;height:100%}.rrow .face-svg{width:24px;height:24px}.restable .face-svg{width:30px;height:30px;margin-right:6px}
+
+/* ---------- 대기실 (크아 스타일) ---------- */
+#menu{display:grid;grid-template-columns:1.5fr 1fr;grid-template-rows:auto 1fr auto;gap:12px 14px;padding:14px 22px 0;background:linear-gradient(180deg,#1f8fe8,#2bb4f0);word-break:keep-all}
+.rhead{grid-column:1/3;color:#fff}.rhead h2{display:inline;font-family:"Black Han Sans";font-size:28px;margin-left:8px;vertical-align:middle}.rhead p{font-size:13px;opacity:.9;margin:4px 0 0}
+.rbadge{background:var(--yellow);color:var(--ink);font-weight:700;font-size:13px;padding:4px 10px;border-radius:999px;box-shadow:0 3px 0 #c99a00;vertical-align:middle}
+.rleft,.rright{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
+.rp{padding:12px 14px}.ptitle{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}.ptitle b{font-size:17px;color:var(--ink)}.ptitle small{margin-left:auto;font-size:12px;color:#7a88a8}
+.pslots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pslot{position:relative;border:2px dashed #c9d6ea;border-radius:14px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:20px 6px 6px;font-size:13px;color:#7a88a8;background:#f8fbff}
+.pslot .pn{position:absolute;left:8px;top:6px;font-weight:700;color:var(--blue2);font-size:12px}.pslot .tg{position:absolute;right:8px;top:5px;background:#e2e8f3;color:var(--ink2);font-size:11px;padding:1px 7px;border-radius:8px}
+.pslot.me .tg{background:var(--blue);color:#fff}.pslot.full{border:2px solid var(--line);background:#fff;color:var(--ink)}.pslot.me{border-color:var(--blue);box-shadow:0 0 0 3px #bfd9ff}
+.pslot .face-svg{width:54px;height:54px}.pslot .nm{font-weight:700;font-size:15px}.pslot .sub{font-size:11px;color:#7a88a8}
+.pslot select{width:100%;font-size:12px;padding:2px;border-radius:7px;border:1px solid #cdd6e6}
+.pslot .x{position:absolute;right:6px;top:24px;width:20px;height:20px;border-radius:6px;background:#ffe3e6;color:#e0404c;font-size:12px}
+.pslot .add{border:2px dashed #8fb3e8;border-radius:12px;padding:12px 16px;white-space:nowrap;color:var(--blue2);font-weight:700;font-size:14px;background:#fff}
+.pslot .col{width:100%;color:#fff;font-size:12px;padding:5px;border-radius:9px;font-weight:700;margin-top:2px}
+.pslot .df{display:flex;align-items:center;gap:4px;width:100%;justify-content:center}.pslot .df button{width:20px;height:20px;border-radius:6px;background:#eef2f9;font-size:11px}.pslot .df span{min-width:42px;text-align:center;font-size:12px;color:var(--ink2)}
+.pick .chars{grid-template-columns:repeat(9,1fr)}.pick .chip{font-size:12px}.pick .chip .face-svg{width:34px;height:34px}
+.kpick{display:grid;grid-template-columns:1.2fr 1fr;gap:10px}.kpick .karts{grid-template-columns:repeat(2,1fr)}.kpick .kchip{padding:6px;font-size:13px}
+.tbig{display:flex;gap:12px;align-items:center;margin-bottom:8px}.tbig canvas{width:46%;border-radius:12px;border:2px solid var(--line)}.tbig b{font-family:"Black Han Sans";font-size:22px;display:block}.tbig small{font-size:13px;color:#7a88a8}
+.rright .tracks{grid-template-columns:repeat(3,1fr);gap:8px}.rright .tcard{padding:5px}.rright .tcard b{font-size:13px}.rright .tcard small{display:none}
+.rright .opts{min-width:0}.rright .modeinfo{margin:2px 0 0}
+.rbar{grid-column:1/3;display:flex;gap:10px;align-items:center;background:#123a73;margin:0 -22px;padding:10px 22px}
+.rbtn{border:2px solid rgba(255,255,255,.55);color:#fff;padding:9px 16px;border-radius:12px;font-size:14px}.rbar .go{margin:0 0 0 auto;min-width:360px;padding:10px 18px}
 </style>
 </head>
 <body>
@@ -171,27 +195,28 @@ kbd{display:inline-block;min-width:34px;padding:4px 9px;border-radius:8px;backgr
 </div></div>
 <!-- 대기실 -->
 <div id="menu" class="hide">
- <div class="logo"><h1>BOOST <b>KART</b></h1><span class="tag">대기실</span><button class="help" id="backMain">← 메인</button><button class="help" id="helpBtn" style="margin-left:0">조작법 · 주행 기술</button></div>
- <div class="panel left">
-  <div class="sec"><h3>캐릭터 <small>외형만 달라요</small></h3><div class="chars" id="charList"></div></div>
-  <div class="sec"><h3>캐릭터 색상 <small>팀전은 같은 색이 한 팀</small></h3><div class="colors" id="colorList"></div></div>
-  <div class="sec"><h3>카트 <small>카트마다 성능이 달라요</small></h3><div class="karts" id="kartList"></div>
-   <div class="stats" id="kartStats"></div><p class="kdesc" id="kartDesc"></p></div>
- </div>
- <div class="preview-name"><b id="pvName"></b><span id="pvKart"></span></div>
- <div class="bottom">
-  <div class="panel"><div class="sec"><h3>트랙</h3><div class="tracks" id="trackList"></div></div></div>
-  <div class="panel opts">
-   <div class="opt"><span>모드</span><div class="seg" id="optMode"></div></div>
-   <p class="modeinfo" id="modeInfo"></p>
-   <div class="opt hide" id="fmtRow"><span>팀 구성</span><div class="seg" id="optFmt"></div></div>
-   <div class="opt" id="botsRow"><span>봇 수</span><div class="seg" id="optBots"></div></div>
-   <div class="opt"><span>난이도</span><div class="seg" id="optDiff"></div></div>
-   <div class="opt"><span>바퀴 수</span><div class="seg" id="optLaps"></div></div>
-   <div class="botlist" id="botList"></div>
-   <button class="go" id="goBtn">출발!</button>
+ <div class="rhead"><span class="rbadge">1 PLAYER</span><h2>스피드전 대기실</h2><p>내 캐릭터와 카트를 고르고, 빈 자리에 봇을 넣거나 빼서 인원을 맞춰요.</p></div>
+ <div class="rleft">
+  <div class="panel rp"><div class="ptitle"><b>플레이어</b><small id="slotCount"></small></div><div class="pslots" id="slotGrid"></div></div>
+  <div class="panel rp pick">
+   <div class="ptitle"><b>캐릭터 선택</b><small>색은 P1 카드 버튼으로 · 팀전은 같은 색이 한 팀</small></div>
+   <div class="chars" id="charList"></div>
+   <div class="ptitle" style="margin-top:10px"><b>카트 선택</b><small>카트마다 성능이 달라요</small></div>
+   <div class="kpick"><div class="karts" id="kartList"></div><div><div class="stats" id="kartStats"></div><p class="kdesc" id="kartDesc"></p></div></div>
   </div>
  </div>
+ <div class="rright">
+  <div class="panel rp"><div class="ptitle"><b>트랙</b></div>
+   <div class="tbig"><canvas width="300" height="168" id="tmapBig"></canvas><div><b id="tName"></b><small id="tSub"></small></div></div>
+   <div class="tracks" id="trackList"></div></div>
+  <div class="panel rp opts">
+   <div class="opt"><span>방식</span><div class="seg" id="optMode"></div></div>
+   <div class="opt hide" id="fmtRow"><span>팀 구성</span><div class="seg" id="optFmt"></div></div>
+   <div class="opt"><span>바퀴 수</span><div class="seg" id="optLaps"></div></div>
+   <p class="modeinfo" id="modeInfo"></p>
+  </div>
+ </div>
+ <div class="rbar"><button class="rbtn" id="backMain">나가기</button><button class="rbtn" id="helpBtn">조작법 · 주행 기술</button><button class="go" id="goBtn">게임 시작</button></div>
 </div>
 
 <!-- 조작법 -->
@@ -708,7 +733,7 @@ function makeRace(trackIdx,laps,player,bots,diff,mode=0,cfg=null){
   if(bc&&bc.c>=0&&CHARS[bc.c])c=bc.c; else {do{c=Math.floor(Math.random()*CHARS.length);}while(usedChars.has(c)&&usedChars.size<CHARS.length);}
   usedChars.add(c);
   const kk=bc&&bc.k>=0&&KARTS[bc.k]?bc.k:Math.floor(Math.random()*KARTS.length);
-  const r=makeRacer(T,i,kk,c,slots[i],true,diff);
+  const r=makeRacer(T,i,kk,c,slots[i],true,bc&&bc.d!=null?bc.d:diff);
   r.name=CHARS[c].name; rs.push(r);
  }
  assignColors(rs,player.color>=0?player.color:0,mode,cfg&&cfg.teams);
@@ -718,7 +743,7 @@ function makeRace(trackIdx,laps,player,bots,diff,mode=0,cfg=null){
 function assignColors(rs,myCol,mode,teams=null){
  const others=[...Array(PALETTE.length).keys()].filter(c=>c!==myCol).sort(()=>Math.random()-0.5);
  rs[0].color=myCol;
- if(mode===1&&teams&&teams.length===rs.length){const tc=[myCol,...[...Array(PALETTE.length).keys()].filter(c=>c!==myCol)];for(let i=0;i<rs.length;i++)rs[i].color=tc[teams[i]];}
+ if(mode===1&&teams&&teams.length===rs.length){for(let i=0;i<rs.length;i++)rs[i].color=PALETTE[teams[i]]?teams[i]:myCol;}
  else if(mode===1&&rs.length>=4){
   const q=[myCol,myCol];for(let i=0;q.length<rs.length;i++){const c=others[i%others.length];q.push(c,c);}
   for(let i=1;i<rs.length;i++)rs[i].color=q[i];
@@ -1274,12 +1299,16 @@ function updateCamera(r,dt,mode){
 /* ===================== APP: 메뉴 · 경기 · HUD · 소리 ===================== */
 const $=id=>document.getElementById(id);
 const SAVE_KEY="boostkart.v1";
-const ROOM_DEF={track:0,bots:7,diff:2,laps:3,mode:0,fmt:2,botCfg:[]};
+const ROOM_DEF={track:0,laps:3,mode:0,slots:[{c:-1,k:-1,d:2,t:-1},null,null,null,null,null,null]};
 const TEAM_FMTS=[{n:"2:2",t:[2,2]},{n:"3:3",t:[3,3]},{n:"4:4",t:[4,4]},{n:"2:2:2",t:[2,2,2]},{n:"2:2:2:2",t:[2,2,2,2]}];
-const SEL=Object.assign({char:0,kart:0,color:0},ROOM_DEF,loadSel());if(!Array.isArray(SEL.botCfg))SEL.botCfg=[];if(!TEAM_FMTS[SEL.fmt])SEL.fmt=2;
-function roomBotCount(){return SEL.mode===1?TEAM_FMTS[SEL.fmt].t.reduce((a,b)=>a+b,0)-1:SEL.bots;}
-function teamSlots(){const t=[];TEAM_FMTS[SEL.fmt].t.forEach((n,ti)=>{for(let i=0;i<n;i++)t.push(ti);});return t;}
-function teamColorList(){return [SEL.color,...[...Array(PALETTE.length).keys()].filter(c=>c!==SEL.color)];}
+const SEL=Object.assign({char:0,kart:0,color:0},JSON.parse(JSON.stringify(ROOM_DEF)),loadSel());if(!Array.isArray(SEL.slots)||SEL.slots.length!==7)SEL.slots=JSON.parse(JSON.stringify(ROOM_DEF.slots));
+const botsOf=()=>SEL.slots.filter(Boolean);
+function roomBotCount(){return botsOf().length;}
+function otherColors(){return [...Array(PALETTE.length).keys()].filter(c=>c!==SEL.color);}
+function applyFmt(fi){const F=TEAM_FMTS[fi],cols=[SEL.color,...otherColors()],t=[];F.t.forEach((n,ti)=>{for(let i=0;i<n;i++)t.push(cols[ti]);});
+ SEL.slots=SEL.slots.map((b,i)=>i<t.length-1?Object.assign({c:-1,k:-1,d:2},b||{},{t:t[i+1]}):null);}
+function autoTeams(){const bs=botsOf(),o=otherColors()[0],half=Math.floor((bs.length+1)/2);bs.forEach((b,i)=>{if(!PALETTE[b.t])b.t=(i+1)<half?SEL.color:o;});}
+function teamCheck(){if(SEL.mode!==1)return roomBotCount()>0?"":"봇을 1명 이상 넣어줘";const set=new Set([SEL.color,...botsOf().map(b=>b.t)]);return set.size>=2?"":"팀이 2개 이상 필요해 — 봇 카드의 색 버튼으로 팀을 나눠줘";}
 // 대기실 입장 시 방 설정 초기화(캐릭터·카트·색은 유지)
 function enterRoom(){Object.assign(SEL,JSON.parse(JSON.stringify(ROOM_DEF)));hide("mainScreen");show("menu");PV.key="";refreshMenu();}
 function backToMain(){hide("menu");show("mainScreen");}
@@ -1330,61 +1359,64 @@ function toggleMute(){SND.muted=!SND.muted;if(SND.muted&&SND.engGain)SND.engGain
 function faceHTML(c,col=-1){return '<span class="face-svg">'+avatarSVG(c,"down",true,false,false,col)+'</span>';}
 function charListHTML(){return CHARS.map((c,i)=>`<button class="chip" data-c="${i}">${faceHTML(i,SEL.color)}<span>${c.name}</span></button>`).join("")+`<button class="chip" data-c="-1"><span class="face rand" style="background:${PALETTE[SEL.color].c}">?</span><span>랜덤</span></button>`;}
 function buildMenu(){
- $("colorList").innerHTML=PALETTE.map((p,i)=>`<button class="cchip" data-col="${i}" title="${p.n}" style="background:${p.c}"></button>`).join("");
  $("optMode").innerHTML=["개인전","팀전"].map((n,i)=>`<button data-v="${i}">${n}</button>`).join("");
  $("kartList").innerHTML=KARTS.map((k,i)=>`<button class="kchip" data-k="${i}"><i style="background:${k.color}"></i><span>${k.name}<small>${k.type}</small></span></button>`).join("");
  $("trackList").innerHTML=TRACKS.map((t,i)=>`<button class="tcard" data-t="${i}"><canvas width="300" height="168" id="tmap${i}"></canvas><b>${t.name}</b><small>${t.sub}</small></button>`).join("");
  TRACKS.forEach((t,i)=>drawTrackThumb($("tmap"+i),getTrack(i)));
- $("optBots").innerHTML=[1,3,5,7].map(n=>`<button data-v="${n}">${n}명</button>`).join("");
- $("optDiff").innerHTML=DIFFS.map((d,i)=>`<button data-v="${i}">${d.name}</button>`).join("");
  $("optLaps").innerHTML=[1,2,3].map(n=>`<button data-v="${n}">${n}바퀴</button>`).join("");
  $("optFmt").innerHTML=TEAM_FMTS.map((f,i)=>`<button data-v="${i}">${f.n}</button>`).join("");
- $("optFmt").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.fmt=+b.dataset.v;refreshMenu();};
- $("botList").onchange=e=>{const s=e.target.closest("select");if(!s)return;const i=+s.dataset.i;SEL.botCfg[i]=SEL.botCfg[i]||{c:-1,k:-1};SEL.botCfg[i][s.dataset.f]=+s.value;saveSel();};
- $("enterBtn").onclick=enterRoom; $("backMain").onclick=backToMain; $("mainHelp").onclick=openHelp;
- $("colorList").onclick=e=>{const b=e.target.closest("[data-col]");if(!b)return;SEL.color=+b.dataset.col;refreshMenu();};
- $("optMode").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.mode=+b.dataset.v;refreshMenu();};
+ $("optMode").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.mode=+b.dataset.v;if(SEL.mode===1)autoTeams();refreshMenu();};
+ $("optFmt").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;applyFmt(+b.dataset.v);refreshMenu();};
  $("charList").onclick=e=>{const b=e.target.closest("[data-c]");if(!b)return;SEL.char=+b.dataset.c;refreshMenu();};
  $("kartList").onclick=e=>{const b=e.target.closest("[data-k]");if(!b)return;SEL.kart=+b.dataset.k;refreshMenu();};
  $("trackList").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;SEL.track=+b.dataset.t;refreshMenu();};
- $("optBots").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.bots=+b.dataset.v;refreshMenu();};
- $("optDiff").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.diff=+b.dataset.v;refreshMenu();};
  $("optLaps").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;SEL.laps=+b.dataset.v;refreshMenu();};
+ $("slotGrid").onclick=e=>{const el=e.target.closest("[data-a]");if(!el)return;const i=+el.dataset.i,a=el.dataset.a,b=SEL.slots[i];
+  if(a==="add"){const nb={c:-1,k:-1,d:2,t:-1};if(SEL.mode===1)nb.t=otherColors()[0];SEL.slots[i]=nb;}
+  else if(a==="del")SEL.slots[i]=null;
+  else if(a==="dm"&&b)b.d=Math.max(0,b.d-1); else if(a==="dp"&&b)b.d=Math.min(DIFFS.length-1,b.d+1);
+  else if(a==="col"&&b)b.t=(PALETTE[b.t]?b.t+1:0)%PALETTE.length;
+  else if(a==="mycol"){const old=SEL.color;SEL.color=(SEL.color+1)%PALETTE.length;for(const s of SEL.slots)if(s&&s.t===SEL.color)s.t=old;}
+  refreshMenu();};
+ $("slotGrid").onchange=e=>{const s=e.target.closest("select");if(!s)return;const b=SEL.slots[+s.dataset.i];if(b){b[s.dataset.f]=+s.value;refreshMenu();}};
  $("goBtn").onclick=startRace;
+ $("enterBtn").onclick=enterRoom; $("backMain").onclick=backToMain; $("mainHelp").onclick=openHelp;
  $("helpBtn").onclick=openHelp; $("helpClose").onclick=closeHelp; $("pHelp").onclick=openHelp;
  $("pResume").onclick=resumeGame; $("pRestart").onclick=()=>{hide("pause");startRace();}; $("pMenu").onclick=toMenu;
  $("rAgain").onclick=()=>{hide("result");startRace();}; $("rMenu").onclick=toMenu;
  refreshMenu();
 }
-function renderBotList(){
- const n=roomBotCount(),teams=SEL.mode===1?teamSlots():null,tc=teamColorList();
- const key=[n,SEL.mode,SEL.fmt,SEL.color].join(":");if($("botList").dataset.k===key)return;$("botList").dataset.k=key;
- const opt=(arr,v)=>`<option value="-1"${v<0?" selected":""}>랜덤</option>`+arr.map((x,i)=>`<option value="${i}"${v===i?" selected":""}>${x.name}</option>`).join("");
- $("botList").innerHTML=[...Array(n)].map((_,i)=>{const b=SEL.botCfg[i]||{c:-1,k:-1},col=teams?PALETTE[tc[teams[i+1]]].c:"#b7c1d6";
-  return `<div class="botrow"><i style="background:${col}"></i><b>봇${i+1}</b><select data-i="${i}" data-f="c">${opt(CHARS,b.c)}</select><select data-i="${i}" data-f="k">${opt(KARTS,b.k)}</select></div>`;}).join("");
+function renderSlots(){
+ const team=SEL.mode===1,opt=(arr,v)=>`<option value="-1"${v<0?" selected":""}>랜덤</option>`+arr.map((x,i)=>`<option value="${i}"${v===i?" selected":""}>${x.name}</option>`).join("");
+ const colBtn=(c,a,i)=>`<button class="col" data-a="${a}" data-i="${i}" style="background:${PALETTE[c].c}">${PALETTE[c].n} ⇄</button>`;
+ const me=`<div class="pslot full me"><span class="pn">P1</span><span class="tg">1P</span>${SEL.char<0?'<span class="face rand" style="width:54px;height:54px;background:'+PALETTE[SEL.color].c+'">?</span>':faceHTML(SEL.char,SEL.color)}<span class="nm">${SEL.char<0?"랜덤":CHARS[SEL.char].name}</span><span class="sub">나 · ${KARTS[SEL.kart].name}</span>${colBtn(SEL.color,"mycol",-1)}</div>`;
+ const others=SEL.slots.map((b,i)=>{const pn=`<span class="pn">P${i+2}</span>`;
+  if(!b)return `<div class="pslot">${pn}<button class="add" data-a="add" data-i="${i}">＋ 봇 추가</button><span>빈 자리</span></div>`;
+  const col=team?(PALETTE[b.t]?b.t:otherColors()[0]):null;
+  return `<div class="pslot full">${pn}<span class="tg">봇</span><button class="x" data-a="del" data-i="${i}">✕</button>${b.c<0?'<span class="face rand" style="width:46px;height:46px">?</span>':faceHTML(b.c,team?col:-1)}
+   <select data-i="${i}" data-f="c">${opt(CHARS,b.c)}</select><select data-i="${i}" data-f="k">${opt(KARTS,b.k)}</select>
+   <div class="df"><button data-a="dm" data-i="${i}">◀</button><span>${DIFFS[b.d].name}</span><button data-a="dp" data-i="${i}">▶</button></div>${team?colBtn(col,"col",i):""}</div>`;}).join("");
+ $("slotGrid").innerHTML=me+others;
+ $("slotCount").textContent=`${roomBotCount()+1}/8 · 사람 1 · 봇 ${roomBotCount()}`;
 }
 function refreshMenu(){
  if(!PALETTE[SEL.color])SEL.color=0;
+ if(SEL.mode===1)for(const b of botsOf())if(!PALETTE[b.t])b.t=otherColors()[0];
  const cl=charListHTML();if($("charList").dataset.k!==cl.length+":"+SEL.color){$("charList").innerHTML=cl;$("charList").dataset.k=cl.length+":"+SEL.color;}
- document.querySelectorAll("#colorList .cchip").forEach(b=>b.classList.toggle("on",+b.dataset.col===SEL.color));
  document.querySelectorAll("#optMode button").forEach(b=>b.classList.toggle("on",+b.dataset.v===SEL.mode));
- const F=TEAM_FMTS[SEL.fmt];
- $("modeInfo").textContent=SEL.mode===0?"색은 외형만 달라져요":`${F.n} · ${F.t.length}팀 · 내 팀은 ${PALETTE[SEL.color].n} · 순위 포인트 합산`;
- $("modeInfo").classList.remove("bad");$("goBtn").disabled=false;
- $("fmtRow").classList.toggle("hide",SEL.mode!==1);$("botsRow").classList.toggle("hide",SEL.mode===1);
- document.querySelectorAll("#optFmt button").forEach(b=>b.classList.toggle("on",+b.dataset.v===SEL.fmt));
- renderBotList();
+ $("fmtRow").classList.toggle("hide",SEL.mode!==1);
+ const bad=teamCheck();
+ $("modeInfo").textContent=bad||(SEL.mode===0?"개인전 · 색은 외형만 달라져요":`팀전 · ${new Set([SEL.color,...botsOf().map(b=>b.t)]).size}팀 · 같은 색이 한 팀 · 순위 포인트 합산`);
+ $("modeInfo").classList.toggle("bad",!!bad);$("goBtn").disabled=!!bad;
  document.querySelectorAll("#charList .chip").forEach(b=>b.classList.toggle("on",+b.dataset.c===SEL.char));
  document.querySelectorAll("#kartList .kchip").forEach(b=>b.classList.toggle("on",+b.dataset.k===SEL.kart));
  document.querySelectorAll("#trackList .tcard").forEach(b=>b.classList.toggle("on",+b.dataset.t===SEL.track));
- document.querySelectorAll("#optBots button").forEach(b=>b.classList.toggle("on",+b.dataset.v===SEL.bots));
- document.querySelectorAll("#optDiff button").forEach(b=>b.classList.toggle("on",+b.dataset.v===SEL.diff));
  document.querySelectorAll("#optLaps button").forEach(b=>b.classList.toggle("on",+b.dataset.v===SEL.laps));
+ const tr=TRACKS[SEL.track];$("tName").textContent=tr.name;$("tSub").textContent=tr.sub;if($("tmapBig").dataset.t!==String(SEL.track)){$("tmapBig").dataset.t=SEL.track;drawTrackThumb($("tmapBig"),getTrack(SEL.track));}
  const k=KARTS[SEL.kart];
  $("kartStats").innerHTML=kartGrades(k).map(([n,v])=>`<span>${n}</span><div class="bar"><i style="width:${v*10}%"></i></div>`).join("");
  $("kartDesc").textContent=KART_DESC[SEL.kart];
- $("pvName").textContent=(SEL.char<0?"랜덤 ?":CHARS[SEL.char].name)+" · "+PALETTE[SEL.color].n;
- $("pvKart").textContent=k.name+" · "+k.type;
+ renderSlots();
  setPreview(SEL.kart,SEL.char,SEL.color);
  saveSel();
 }
@@ -1450,8 +1482,9 @@ function startRace(){
  clearKeys();
  initAudio(); if(SND.ctx&&SND.ctx.state==="suspended")SND.ctx.resume();
  const charIdx=SEL.char<0?Math.floor(Math.random()*CHARS.length):SEL.char;
- const nb=roomBotCount(),cfg={bots:[...Array(nb)].map((_,i)=>SEL.botCfg[i]||{c:-1,k:-1}),teams:SEL.mode===1?teamSlots():null};
- RACE=makeRace(SEL.track,SEL.laps,{kart:SEL.kart,char:charIdx,color:SEL.color},nb,SEL.diff,SEL.mode,cfg);
+ if(teamCheck())return;
+ const bs=botsOf(),cfg={bots:bs,teams:SEL.mode===1?[SEL.color,...bs.map(b=>b.t)]:null};
+ RACE=makeRace(SEL.track,SEL.laps,{kart:SEL.kart,char:charIdx,color:SEL.color},bs.length,2,SEL.mode,cfg);
  RACE.randReveal=SEL.char<0;
  RACE.countdown=4.2; // READY 0.9초 + 3·2·1
  buildWorld(RACE.T);
@@ -1571,7 +1604,7 @@ function showResult(){
   tr.innerHTML=`<div class="banner" style="background:${PALETTE[win.team].c}">${PALETTE[win.team].n} 팀 승리! · ${win.pts}점</div>`+ts.map(t=>`<div class="trow"><i style="background:${PALETTE[t.team].c}"></i>${PALETTE[t.team].n} 팀 · ${t.members.map(m=>m===p?"나":m.name).join(", ")}<b>${t.pts}점</b></div>`).join("");
   tr.classList.remove("hide");}
  else{tr.innerHTML="";tr.classList.add("hide");}
- $("rTrack").textContent=R.T.def.name+" · "+DIFFS[SEL.diff].name+" · "+R.laps+"바퀴";
+ $("rTrack").textContent=R.T.def.name+" · "+"봇 "+(R.rs.length-1)+"명 · "+R.laps+"바퀴";
  const best=p.lapTimes.length?Math.min(...p.lapTimes):0;
  $("rMine").innerHTML=`<div>기록<b>${retired?"-":fmtT(p.finishT)}</b></div><div>베스트 랩<b>${best?fmtT(best):"-"}</b></div><div>드리프트<b>${p.stats.drifts}</b></div><div>순간 부스터<b>${p.stats.insts}</b></div><div>부스터<b>${p.stats.boostsUsed}</b></div><div>벽 충돌<b>${p.stats.walls}</b></div>`;
  $("rTable").innerHTML=order.map((r,i)=>`<tr class="${r===p?"me":""}"><td>${r.finished?i+1:"-"}</td><td>${R.mode===1?`<i style="background:${PALETTE[r.color].c}"></i>`:""}${faceHTML(r.char,r.color)}${r===p?"나":r.name}</td><td>${KARTS[r.kart].name}</td><td>${r.finished?fmtT(r.finishT):"리타이어"}</td></tr>`).join("");
