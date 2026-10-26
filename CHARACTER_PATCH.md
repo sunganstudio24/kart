@@ -18,3 +18,10 @@
 실행: `index.html`을 브라우저에서 연다. 기존 Three.js CDN을 사용하므로 인터넷 연결이 필요하다. 브라우저 검증은 저장소 루트에서 `node tests/characters.test.cjs`로 실행한다(Chrome, Playwright, Three.js r128 필요; `PLAYWRIGHT_MODULE`과 `THREE_JS`로 설치 경로 지정 가능).
 
 GitHub 연결 계정은 검사 당시 `eonion99`, 대상 저장소는 `sunganstudio24/kart`, 쓰기 권한은 false였다. 원격 게시 및 main 병합은 하지 않았다.
+
+## 3D 모델 전환 (2026-10-26)
+
+- 주행·미리보기 드라이버를 2D 스프라이트에서 Three.js 3D 모델로 교체했다. 캐릭터 색 후드, 큰 머리, 눈·볼·입, 핸들 잡은 팔 구성.
+- 캐릭터별 머리 장식: 배찌 둥근 귀, 다오 뿔, 우니 새싹, 모스 모자, 디지니·에띠 고양이 귀, 마리드 구름, 케피 곰 귀.
+- 조향 시 머리가 기울고 회전한다. 메뉴 아이콘·순위표 얼굴은 기존 SVG를 그대로 쓴다.
+- 스프라이트 전용 테스트(`tests/characters.test.cjs`)는 삭제했다. 코어 회귀 테스트 14개 통과, 헤드리스 렌더링 JS 오류 0개.

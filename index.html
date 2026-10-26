@@ -1028,11 +1028,40 @@ function makeKartMesh(kartIdx,charIdx){
   const st=new THREE.Mesh(new THREE.BoxGeometry(0.37,0.08,0.3),accent); spin.add(st);
   if(big){piv.scale.set(1.15,1.12,1.12);} wheels.push(spin); if(z>0) steerP.push(piv);
  }
- // Reuse Balloon Battle SVG artwork, including its original mounted poses.
- const C=new THREE.Group();body.add(C);
- const head=new THREE.Group();C.add(head);
- const driver=new THREE.Sprite(new THREE.SpriteMaterial({map:avatarTexture(charIdx,"down"),transparent:true,alphaTest:0.02,depthWrite:false}));
- driver.position.set(0,1.6,-0.25);driver.scale.set(1.42,1.7513,1);head.add(driver);
+ // 물풍선배틀 캐릭터를 3D 모델로 구성 (2D 스프라이트 대체)
+ const C=new THREE.Group();body.add(C);C.position.set(0,0.98,-0.38);
+ const cc=new THREE.Color(ch.color),dkC=cc.clone().offsetHSL(0,0,-0.18),ltC=cc.clone().offsetHSL(0,0,0.12);
+ const mC=P(ch.color,30),mDk=P(dkC.getHex(),20),mLt=P(ltC.getHex(),30),mSkin=P(0xffe8d2,20),mHair=P(charIdx===0?0x814e3e:0x3e4a64,25);
+ const mW=P(0xffffff,80),mEye=P(0x1d2a3a,90),mCheek=L(0xffa8b0),mCream=L(0xfff4e6),mPink=L(0xffc6e0),mLeaf=P(0x91db67,30);
+ const S=(r,ws=14,hs=10)=>new THREE.SphereGeometry(r,ws,hs);
+ // 몸통·팔
+ const torso=add(S(0.3),mC,0,0.22,0,C);torso.scale.set(1.05,1.1,0.85);
+ add(new THREE.CylinderGeometry(0.3,0.32,0.08,14),mDk,0,0.05,0,C);
+ for(const s of [-1,1]){const arm=add(new THREE.CylinderGeometry(0.075,0.085,0.42,8),mC,s*0.27,0.24,0.2,C);arm.rotation.set(1.15,0,s*0.35);add(S(0.1,10,8),mSkin,s*0.15,0.08,0.62,C);}
+ // 머리 (물풍선배틀처럼 큰 머리)
+ const head=new THREE.Group();head.position.set(0,0.72,0.02);C.add(head);
+ const hr=0.4;
+ const skull=add(S(hr,20,14),mSkin,0,0,0,head);skull.scale.set(1.08,1,1);
+ const hair=add(new THREE.SphereGeometry(hr*1.05,20,12,0,Math.PI*2,0,Math.PI*0.52),mC,0,0.02,-0.03,head);hair.scale.set(1.08,1,1);hair.rotation.x=-0.42;
+ const bang=add(new THREE.SphereGeometry(hr*1.06,16,6,Math.PI*0.62,Math.PI*0.76,0,Math.PI*0.3),mHair,0,0.02,0,head);bang.scale.set(1.08,1,1);
+ for(const s of [-1,1]){
+  const w=add(S(0.105,12,10),mW,s*0.15,-0.04,hr*0.86,head);w.scale.set(0.8,1.1,0.45);
+  const p=add(S(0.06,10,8),mEye,s*0.145,-0.05,hr*0.93,head);p.scale.set(0.9,1.15,0.5);
+  add(S(0.022,6,5),mW,s*0.13+0.02,-0.01,hr*0.97,head);
+  const ck=add(S(0.05,8,6),mCheek,s*0.26,-0.17,hr*0.78,head);ck.scale.set(1,0.6,0.4);
+ }
+ const mouth=add(new THREE.TorusGeometry(0.04,0.012,5,10,Math.PI),mEye,0,-0.2,hr*0.92,head);mouth.rotation.z=Math.PI;
+ // 캐릭터별 모자·귀
+ const ci=charIdx,ear=(m,x,y,r)=>{const e=add(S(r,12,10),m,x,y,0,head);e.scale.set(1,1,0.6);return e;};
+ const cone=(m,x,y,z,r,h,rz)=>{const o=add(new THREE.ConeGeometry(r,h,8),m,x,y,z,head);o.rotation.z=rz;return o;};
+ if(ci===0){ear(mC,-0.36,0.3,0.14);ear(mC,0.36,0.3,0.14);}
+ else if(ci===1){for(const [x,rz] of [[-0.18,0.5],[0,0],[0.18,-0.5]])cone(mLt,x,0.42,-0.05,0.09,0.24,rz);}
+ else if(ci===2){const st=add(new THREE.CylinderGeometry(0.02,0.025,0.16,6),mLeaf,0,0.46,0,head);for(const s of [-1,1]){const l=add(S(0.1,10,8),mLeaf,s*0.1,0.54,0,head);l.scale.set(1.3,0.45,0.7);l.rotation.z=s*0.4;}}
+ else if(ci===3){add(new THREE.CylinderGeometry(0.24,0.3,0.26,16),mDk,0,0.42,-0.02,head);add(new THREE.CylinderGeometry(0.305,0.305,0.07,16),mLt,0,0.35,-0.02,head);}
+ else if(ci===4||ci===6){const inner=ci===4?mCream:mPink;for(const s of [-1,1]){cone(mC,s*0.26,0.38,-0.02,0.13,0.3,-s*0.35);cone(inner,s*0.255,0.37,0.04,0.07,0.18,-s*0.35);}}
+ else if(ci===5){for(const [x,y,r] of [[-0.22,0.3,0.13],[0,0.38,0.15],[0.22,0.3,0.13],[-0.36,0.16,0.1],[0.36,0.16,0.1]])add(S(r,10,8),mW,x,y,-0.04,head);}
+ else{for(const s of [-1,1]){ear(mDk,s*0.34,0.3,0.12);const i=ear(mLt,s*0.34,0.3,0.06);i.position.z=0.05;}}
+ const driver=null;
  // 번호판 느낌 스트라이프
  add(new THREE.BoxGeometry(0.22,0.43,1.6),light,0,0.63,0.25).scale.set(1,1.01,1);
  // 부스터 불꽃
@@ -1066,8 +1095,7 @@ function updateKartMesh(m,r,dt,t){
  u.roll+=(rollT-u.roll)*Math.min(1,dt*8); u.body.rotation.z=u.roll;
  const bob=Math.sin(t*28+r.id)*0.012*Math.min(1,spd/10)+(r.bump>0?Math.sin(r.bump*40)*0.05:0);
  u.body.position.y=bob; r.bump=Math.max(0,(r.bump||0)-dt);
- u.driver.material.rotation=-u.roll*0.35;
- updateDriver(m,GFX.camera);
+ u.head.rotation.z=-u.roll*0.6; u.head.rotation.y+=((sr*0.25)-u.head.rotation.y)*Math.min(1,dt*6);
  const boosting=r.boostT>0||r.startBoostT>0, inst=r.instT>0;
  for(const f of u.flames){ f.visible=boosting||inst; const s=boosting?(1+Math.sin(t*60+r.id)*0.18):0.65; f.scale.set(s,s,s*(boosting?1.2:0.8)); }
  u.flameM.color.setHex(boosting?0x6fd2ff:0xffb347);
@@ -1268,8 +1296,7 @@ function setPreview(k,c){
 function renderPreview(dt){
  PV.t+=dt; const r=9.5,a=0.6;
  PV.cam.position.set(Math.sin(a)*r,3.4,Math.cos(a)*r); PV.cam.lookAt(0,0.75,0);
- if(PV.kart){PV.kart.rotation.y+=dt*0.55; PV.kart.userData.body.position.y=Math.sin(PV.t*2)*0.02; PV.kart.userData.driver.material.rotation=Math.sin(PV.t*1.3)*0.04;}
- if(PV.kart){PV.kart.updateMatrixWorld(true);updateDriver(PV.kart,PV.cam);}
+ if(PV.kart){PV.kart.rotation.y+=dt*0.55; PV.kart.userData.body.position.y=Math.sin(PV.t*2)*0.02; PV.kart.userData.head.rotation.z=Math.sin(PV.t*1.3)*0.06;}
  GFX.renderer.render(PV.scene,PV.cam);
 }
 
