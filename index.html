@@ -221,6 +221,7 @@ kbd{display:inline-block;min-width:34px;padding:4px 9px;border-radius:8px;backgr
 <div id="loading">불러오는 중…</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 /* ===================== CORE: 트랙 · 카트 · 물리 · 봇 ===================== */
 "use strict";
@@ -772,7 +773,7 @@ function bannerTex(text,bg,fg){return canvasTex(512,96,(g,w,h)=>{g.fillStyle=bg;
 function disposeObjects(roots){
  const geometries=new Set(),materials=new Set(),textures=new Set();
  for(const root of roots){if(!root)continue;root.removeFromParent?root.removeFromParent():root.parent&&root.parent.remove(root);
-  root.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const v of Object.values(m))if(v&&v.isTexture&&!(v.userData&&v.userData.sharedAvatar))textures.add(v);}});
+  root.traverse(o=>{if(o.userData.sharedGLB)return;if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const v of Object.values(m))if(v&&v.isTexture&&!(v.userData&&v.userData.sharedAvatar))textures.add(v);}});
  }
  textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());geometries.forEach(g=>g.dispose());
 }
@@ -990,6 +991,17 @@ function avatarTexture(ci,dir){
  AVATAR_TEXTURES.set(key,texture);return texture;
 }
 
+/* ---------- 3D 캐릭터 모델 (GLB) ---------- */
+const CHAR_FILES=["bazzi","dao","uni","mos","dizni","marid","ethi","kephi"];
+const CHAR_GLB=[];
+function loadCharModels(onDone){
+ if(!THREE.GLTFLoader){onDone&&onDone();return;}
+ const ld=new THREE.GLTFLoader();let left=CHAR_FILES.length;
+ CHAR_FILES.forEach((n,i)=>ld.load("models/"+n+".glb",g=>{
+  const m=g.scene;m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.userData.sharedGLB=true;o.userData.keepSeparate=true;}});
+  CHAR_GLB[i]=m;if(--left===0&&onDone)onDone();
+ },undefined,()=>{if(--left===0&&onDone)onDone();}));
+}
 function makeKartMesh(kartIdx,charIdx){
  const k=KARTS[kartIdx],ch=CHARS[charIdx],G=new THREE.Group(),body=new THREE.Group();G.add(body);
  const L=c=>new THREE.MeshLambertMaterial({color:c}), P=(c,s=40)=>new THREE.MeshPhongMaterial({color:c,shininess:s});
@@ -1028,8 +1040,14 @@ function makeKartMesh(kartIdx,charIdx){
   const st=new THREE.Mesh(new THREE.BoxGeometry(0.37,0.08,0.3),accent); spin.add(st);
   if(big){piv.scale.set(1.15,1.12,1.12);} wheels.push(spin); if(z>0) steerP.push(piv);
  }
+ let C,head;
+ if(CHAR_GLB[charIdx]){
+  C=new THREE.Group();body.add(C);C.position.set(0,0.78,-0.42);
+  head=new THREE.Group();C.add(head);
+  const model=CHAR_GLB[charIdx].clone();model.scale.setScalar(1.45);head.add(model);
+ } else {
  // 물풍선배틀 2D 원화(avatarSVG)에 맞춘 3D 캐릭터: 캐릭터색 후드 + 안쪽 얼굴 + 큰 세로 눈
- const C=new THREE.Group();body.add(C);C.position.set(0,0.98,-0.38);
+ C=new THREE.Group();body.add(C);C.position.set(0,0.98,-0.38);
  const ci=charIdx,cc=new THREE.Color(ch.color),dkC=new THREE.Color(shade(ch.color,-47)),ltC=new THREE.Color(shade(ch.color,35)),lnC=new THREE.Color(shade(ch.color,-85));
  const T=c=>new THREE.MeshLambertMaterial({color:new THREE.Color(c).convertSRGBToLinear()});
  const mC=T(cc),mDk=T(dkC),mLt=T(ltC),mSkin=T(0xffe8d2),mHair=T(ci===0?0x814e3e:0x3e4a64),mW=T(0xffffff),mEye=new THREE.MeshPhongMaterial({color:new THREE.Color(0x193652).convertSRGBToLinear(),shininess:90}),mCheek=T(0xf4ad9b),mMouth=T(0xac6f57),mGem=T(0xc4f4ff),mLine=new THREE.MeshBasicMaterial({color:lnC.clone().convertSRGBToLinear(),side:THREE.BackSide});
@@ -1040,7 +1058,7 @@ function makeKartMesh(kartIdx,charIdx){
  const belly=add(S(0.17,14,10),mLt,0,0.15,0.17,C);belly.scale.set(1,0.75,0.4);
  for(const s of [-1,1]){const arm=add(new THREE.CylinderGeometry(0.075,0.085,0.4,8),mC,s*0.24,0.22,0.22,C);arm.rotation.set(1.2,0,s*0.3);outl(add(S(0.1,12,10),mC,s*0.15,0.08,0.6,C),1.12);}
  // 머리: 후드(캐릭터색)가 얼굴을 감싼다
- const head=new THREE.Group();head.position.set(0,0.74,0.02);C.add(head);
+ head=new THREE.Group();head.position.set(0,0.74,0.02);C.add(head);
  const hood=outl(add(S(0.46,22,16),mC,0,0,0,head),1.05);hood.scale.set(1.05,1,0.95);
  const hl=add(S(0.2,12,8),mLt,-0.2,0.25,0.22,head);hl.scale.set(1,0.45,0.35);hl.rotation.z=0.6; // 후드 하이라이트
  const face=add(S(0.36,22,16),mSkin,0,-0.06,0.2,head);face.scale.set(1,1.02,0.62);
@@ -1073,6 +1091,7 @@ function makeKartMesh(kartIdx,charIdx){
  else if(ci===5){for(const [x,y,r] of [[-0.2,0.4,0.13],[0,0.47,0.15],[0.2,0.4,0.13],[-0.36,0.27,0.1],[0.36,0.27,0.1]])outl(add(S(r,12,10),mW,x,y,-0.04,head),1.08);}
  else{for(const s of [-1,1]){ear(mDk,s*0.36,0.32,0.13);const i=add(S(0.07,10,8),mLt,s*0.36,0.32,0.06,head);i.scale.set(1,1,0.4);}
   const band=add(new THREE.TorusGeometry(0.34,0.04,6,24,Math.PI),mDk,0,0.17,0.13,head);band.rotation.set(Math.PI/2-0.35,0,0);band.scale.set(1.08,1,1);add(S(0.035,8,6),T(0xffd84d),0,0.3,0.4,head);}
+ }
  const driver=null;
  // 번호판 느낌 스트라이프
  add(new THREE.BoxGeometry(0.22,0.43,1.6),light,0,0.63,0.25).scale.set(1,1.01,1);
@@ -1499,7 +1518,7 @@ function frame(now){
 /* ---------- 시작 ---------- */
 function boot(){
  if(!window.THREE){$("loading").textContent="3D 엔진을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
- initGfx($("gl")); initPreview(); PV.randChar=Math.floor(Math.random()*CHARS.length);
+ initGfx($("gl")); initPreview(); loadCharModels(()=>{PV.key="";refreshMenu();}); PV.randChar=Math.floor(Math.random()*CHARS.length);
  buildMenu(); hide("loading");
  requestAnimationFrame(frame);
 }
